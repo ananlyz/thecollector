@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LevelBaseData
   m_EditorClassIdentifier: 
   levels:
-  - key: 0
-    sceneName: LevelSelect
   - key: 1
+    sceneName: LevelSelect
+  - key: 0
     sceneName: MainMenu
