@@ -6,40 +6,37 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("移动参数")]
-    public float moveSpeed = 5f;       // 移动速度
-    public float jumpForce = 10f;      // 跳跃力度
-
-    [Header("地面检测")]
-    public Transform groundCheck;      // 地面检测点
-    public float checkRadius = 0.2f;   // 检测半径
-    public LayerMask groundLayer;      // 地面层
+    public float moveSpeed = 5f;
+    public float jumpForce = 8f;
+    public int maxJumpCount = 2;
 
     private Rigidbody2D rb;
+    private int jumpCount = 1;
+    private bool isGrounded;       // 是否与地面接触
     private float moveInput;
-    private bool isGrounded;
-    private int jumpCount = 0;        // 跳跃计数
-    public int maxJump = 2;           // 最大跳跃次数
 
-    void Start()
+    [Header("地面检测")]
+    public Transform groundCheck;  // 地面检测点
+    public float checkRadius = 0.2f; // 检测半径
+    public LayerMask groundLayer;    // 地面层Layer=Ground
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Update()
     {
-        moveInput = Input.GetAxisRaw("Horizontal"); // -1 左，1 右
-        //TODO: 多层检测——检测是否在地面
+
+        moveInput = Input.GetAxisRaw("Horizontal");
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-
-        if (isGrounded && rb.velocity.y <= 0)
+        if (isGrounded)
         {
-            jumpCount = 0; // 在地面重置跳跃次数
+            jumpCount = 1; // 落地后重置跳跃次数
         }
-
-        // 多次跳
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (jumpCount < maxJump)
+            if (isGrounded || jumpCount < maxJumpCount)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
                 jumpCount++;
@@ -49,11 +46,27 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(moveInput != 0)
+        if (moveInput != 0)
         {
-            // 翻转角色方向
             transform.localScale = new Vector3(Mathf.Sign(moveInput), 1, 1);
         }
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+
+        // 贴墙处理
+        bool onWallRight = Physics2D.Raycast(transform.position, Vector2.right, 0.6f, groundLayer);
+        bool onWallLeft = Physics2D.Raycast(transform.position, Vector2.left, 0.6f, groundLayer);
+        if ((onWallLeft || onWallRight) && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+        }
+        else {
+            rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        }
+        
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * 0.6f);
     }
 }
