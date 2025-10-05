@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1208651477857563861}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,10 +75,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1373900937
+  m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d281c5c712b1dbc4583b159f233c903f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ba5175a5977f0a4e8a8de7984f3f9d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -148,8 +148,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 11.98, y: 13.67}
+  m_Offset: {x: -0.49835086, y: -2.8736103}
+  m_Size: {x: 2.3926072, y: 5.073583}
   m_Direction: 0
 --- !u!114 &275677953590481192
 MonoBehaviour:
@@ -164,12 +164,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 5
+  climbSpeed: 3
+  jumpForce: 8
   maxJumpCount: 2
   isGrounded: 0
-  jumpCooldown: 0.2
   groundCheck: {fileID: 1283403554464903227}
-  checkRadius: 0.2
+  checkRadius: 0.8
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -219,7 +219,7 @@ Transform:
   m_GameObject: {fileID: 5160550493620600912}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.675, y: -5.158, z: 0}
+  m_LocalPosition: {x: -0.41, y: -4.87, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

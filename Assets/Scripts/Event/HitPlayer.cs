@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HitPlayer : MonoBehaviour
 {
+    public ImageFillTimer imageFillTimer;
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -13,6 +14,10 @@ public class HitPlayer : MonoBehaviour
             {
                 Vector2 dir = (collision.transform.position - transform.position).normalized;
                 playerController.TaskHurt(dir, 3f);
+                if (imageFillTimer != null)
+                {
+                    imageFillTimer.ApplyPunish(5f); 
+                }
             }
         }
     }

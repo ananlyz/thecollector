@@ -8,13 +8,14 @@ public class PlayerController : MonoBehaviour
 {
     [Header("移动参数")]
     public float moveSpeed = 5f;
+    public float climbSpeed = 3f;
     public float jumpForce = 5f;
     public int maxJumpCount = 2;
 
     private Rigidbody2D rb;
     private int jumpCount = 0;
     public bool isGrounded;       // 是否与地面接触
-    private float moveInput;
+    private float moveInputX;
     private float moveInputY;
 
     [Header("地面检测")]
@@ -24,16 +25,50 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
     private bool isHurt = false;
+    private bool isClimb = false;
+    private bool isOnLadder = false;
+    private float gravityScaleAtStart;
+    private bool isWaiting = false;
+
+    public void SetPlayerState(bool waiting)
+    {
+        isWaiting = waiting;
+    }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        gravityScaleAtStart = rb.gravityScale;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isOnLadder = true;
+                animator.SetBool("IsOnLadder", true);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = false;
+            isClimb = false;
+            animator.SetBool("IsClimb", false);
+            animator.SetBool("IsOnLadder", false);
+            rb.gravityScale = gravityScaleAtStart;
+        }
     }
 
     private void Update()
     {
-        if (isHurt)
+        if (isHurt || isWaiting) // 利用动画事件回调
         {
             /* hurtTimer -= Time.deltaTime;
             if (hurtTimer <= 0)
@@ -43,8 +78,21 @@ public class PlayerController : MonoBehaviour
             } */
             return;
         }
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInputX = Input.GetAxisRaw("Horizontal");
         moveInputY = Input.GetAxisRaw("Vertical");
+        if (isOnLadder)
+        {
+            isClimb = moveInputY != 0;
+            animator.SetBool("IsClimb", isClimb);
+            rb.gravityScale = 0f;
+            rb.velocity = new Vector2(0, moveInputY * climbSpeed);
+        }
+        if (!isOnLadder)
+        {
+            isClimb = false;
+            rb.gravityScale = gravityScaleAtStart;
+            animator.SetBool("IsClimb", false);
+        }
     }
 
     private void DoJump()
@@ -59,13 +107,17 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isHurt) return;
-        if (moveInput != 0)
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        animator.SetBool("IsGrounded", isGrounded);
+
+        if (isHurt || isWaiting) return;
+        
+        if (moveInputX != 0 && !isOnLadder) // 反转
         {
-            transform.localScale = new Vector3(Mathf.Sign(moveInput), 1, 1);
+            transform.localScale = new Vector3(Mathf.Sign(moveInputX), 1, 1);
         }
-        animator.SetBool("IsRun", Mathf.Abs(moveInput) > 0f);
-        if (moveInputY < 0)
+        animator.SetBool("IsRun", Mathf.Abs(moveInputX) > 0f);
+        if (moveInputY < 0 && !isOnLadder && isGrounded) // 下蹲
         {
             animator.SetBool("IsCrouch", true);
         }
@@ -74,8 +126,8 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsCrouch", false);
         }
 
-        // 贴墙处理
-        bool onWallRight = Physics2D.Raycast(transform.position, Vector2.right, 0.6f, groundLayer);
+        //TODO: 贴墙处理 
+        /* bool onWallRight = Physics2D.Raycast(transform.position, Vector2.right, 0.6f, groundLayer);
         bool onWallLeft = Physics2D.Raycast(transform.position, Vector2.left, 0.6f, groundLayer);
         if ((onWallLeft || onWallRight) && rb.velocity.y < 0)
         {
@@ -83,11 +135,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-        }
+            rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
+        } */
 
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        animator.SetBool("IsGrounded", isGrounded);
+        if (isGrounded && !isOnLadder)
+        {
+            rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
+        }
 
         if (isGrounded)
         {
@@ -132,6 +186,7 @@ public class PlayerController : MonoBehaviour
         isHurt = true;
         animator.SetBool("IsHurt", true);
         rb.velocity = Vector2.zero;
-        // jitui rb.AddForce(hitDirection.normalized * knockbackForce, ForceMode2D.Impulse);
+        // jitui 
+        rb.AddForce(hitDirection.normalized * knockbackForce, ForceMode2D.Impulse);
     }
 }

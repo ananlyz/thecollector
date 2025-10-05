@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SelectLevelButton : BaseButton
 {
-    public int levelKey = 1;
+    public int levelKey = 0; // 默认进入关卡选择页
     public LevelDatabase LevelDatabase;
 
     protected override void OnClick()
