@@ -1,59 +1,193 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
     [Header("移动参数")]
-    public float moveSpeed = 5f;       // 移动速度
-    public float jumpForce = 10f;      // 跳跃力度
-
-    [Header("地面检测")]
-    public Transform groundCheck;      // 地面检测点
-    public float checkRadius = 0.2f;   // 检测半径
-    public LayerMask groundLayer;      // 地面层
+    public float moveSpeed = 5f;
+    public float climbSpeed = 3f;
+    public float jumpForce = 5f;
+    public int maxJumpCount = 2;
 
     private Rigidbody2D rb;
-    private float moveInput;
-    private bool isGrounded;
-    private int jumpCount = 0;        // 跳跃计数
-    public int maxJump = 2;           // 最大跳跃次数
+    private int jumpCount = 0;
+    public bool isGrounded;       // 是否与地面接触
+    private float moveInputX;
+    private float moveInputY;
 
-    void Start()
+    [Header("地面检测")]
+    public Transform groundCheck;  // 地面检测点
+    public float checkRadius = 0.2f; // 检测半径
+    public LayerMask groundLayer;    // 地面层Layer=Ground
+
+    private Animator animator;
+    private bool isHurt = false;
+    private bool isClimb = false;
+    private bool isOnLadder = false;
+    private float gravityScaleAtStart;
+    private bool isWaiting = false;
+
+    public void SetPlayerState(bool waiting)
     {
-        rb = GetComponent<Rigidbody2D>();
+        isWaiting = waiting;
     }
 
-    void Update()
+    private void Start()
     {
-        moveInput = Input.GetAxisRaw("Horizontal"); // -1 左，1 右
-        //TODO: 多层检测——检测是否在地面
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        gravityScaleAtStart = rb.gravityScale;
+    }
 
-        if (isGrounded && rb.velocity.y <= 0)
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
         {
-            jumpCount = 0; // 在地面重置跳跃次数
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isOnLadder = true;
+                animator.SetBool("IsOnLadder", true);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = false;
+            isClimb = false;
+            animator.SetBool("IsClimb", false);
+            animator.SetBool("IsOnLadder", false);
+            rb.gravityScale = gravityScaleAtStart;
+        }
+    }
+
+    private void Update()
+    {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        animator.SetBool("IsGrounded", isGrounded);
+        if (isHurt || isWaiting) // 利用动画事件回调
+        {
+            /* hurtTimer -= Time.deltaTime;
+            if (hurtTimer <= 0)
+            {
+                isHurt = false;
+                animator.SetBool("IsHurt", false);
+            } */
+            return;
+        }
+        moveInputX = Input.GetAxisRaw("Horizontal");
+        moveInputY = Input.GetAxisRaw("Vertical");
+        if (isOnLadder)
+        {
+            isClimb = moveInputY != 0;
+            animator.SetBool("IsClimb", isClimb);
+            rb.gravityScale = 0f;
+            rb.velocity = new Vector2(0, moveInputY * climbSpeed);
+        }
+        if (!isOnLadder)
+        {
+            isClimb = false;
+            rb.gravityScale = gravityScaleAtStart;
+            animator.SetBool("IsClimb", false);
+        }
+        if (isGrounded)
+        {
+            jumpCount = 0;
+            animator.SetBool("IsJump", false);
+            animator.SetBool("IsDoubleJump", false);
+            animator.SetBool("HasDoubleJump", false);
         }
 
-        // 多次跳
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (jumpCount < maxJump)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-                jumpCount++;
-            }
+            
+            PerformJump();
+            
+        }
+    }
+
+    private void DoJump()
+    {
+        if (jumpCount < maxJumpCount)
+        {
+            ++jumpCount;
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            if (!isGrounded) animator.SetBool("HasDoubleJump", true);
         }
     }
 
     void FixedUpdate()
     {
-        if(moveInput != 0)
+        
+
+        if (isHurt || isWaiting) return;
+        
+        if (moveInputX != 0 && !isOnLadder) // 反转
         {
-            // 翻转角色方向
-            transform.localScale = new Vector3(Mathf.Sign(moveInput), 1, 1);
+            transform.localScale = new Vector3(Mathf.Sign(moveInputX), 1, 1);
         }
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        animator.SetBool("IsRun", Mathf.Abs(moveInputX) > 0f);
+        if (moveInputY < 0 && !isOnLadder && isGrounded) // 下蹲
+        {
+            animator.SetBool("IsCrouch", true);
+        }
+        else
+        {
+            animator.SetBool("IsCrouch", false);
+        }
+
+        //TODO: 贴墙处理 
+        /* bool onWallRight = Physics2D.Raycast(transform.position, Vector2.right, 0.6f, groundLayer);
+        bool onWallLeft = Physics2D.Raycast(transform.position, Vector2.left, 0.6f, groundLayer);
+        if ((onWallLeft || onWallRight) && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
+        } */
+
+        if (isGrounded && !isOnLadder)
+        {
+            rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
+        }
+
+        
+
+    }
+
+    private void PerformJump()
+    {
+        if (isGrounded) animator.SetBool("IsJump", true);
+        else if (!isGrounded) animator.SetBool("IsDoubleJump", true);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, checkRadius);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * 0.6f);
+    }
+
+    public void OnHurtEnd() // huidiao
+    {
+        isHurt = false;
+        animator.SetBool("IsHurt", false);
+    }
+
+    public void TaskHurt(Vector2 hitDirection, float knockbackForce)
+    {
+        if (isHurt) return;
+        isHurt = true;
+        animator.SetBool("IsHurt", true);
+        rb.velocity = Vector2.zero;
+        // jitui 
+        rb.AddForce(hitDirection.normalized * knockbackForce, ForceMode2D.Impulse);
     }
 }

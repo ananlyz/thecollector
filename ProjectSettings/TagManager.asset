@@ -3,12 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ladder
+  - Attack
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
@@ -40,4 +42,22 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Bg
+    uniqueID: 569709207
+    locked: 0
+  - name: ZBg
+    uniqueID: 3918285591
+    locked: 0
+  - name: Ladder
+    uniqueID: 1769885425
+    locked: 0
+  - name: Attack
+    uniqueID: 2888692041
+    locked: 0
+  - name: Player
+    uniqueID: 2921066359
+    locked: 0
+  - name: Front
+    uniqueID: 1864805813
     locked: 0
