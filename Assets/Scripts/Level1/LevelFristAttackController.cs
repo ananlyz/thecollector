@@ -13,15 +13,10 @@ public class LevelFristAttackController : MonoBehaviour
     public float dropSpawnInterval = 3f;
     public int dropCount = 0;           // 0=无限
 
-    [Header("对象显示控制")]
-    public GameObject[] targetObject;     
-    public float showDuration = 2f;
-    public float stopDuration = 2.5f;
 
     void Start()
     {
         StartCoroutine(SpawnDropsRoutine());
-        ShowObjectForSeconds();
     }
 
     IEnumerator SpawnDropsRoutine()
@@ -53,27 +48,5 @@ public class LevelFristAttackController : MonoBehaviour
         }
     }
 
-    public void ShowObjectForSeconds()
-    {
-        if (targetObject != null)
-            StartCoroutine(ShowObjectRoutine());
-    }
-
-    IEnumerator ShowObjectRoutine()
-    {
-        while (true)
-        {
-            foreach (var targ in targetObject)
-            {
-                targ.SetActive(true);
-            }
-            yield return new WaitForSeconds(showDuration);
-            foreach (var targ in targetObject)
-            {
-                targ.SetActive(false);
-            }
-            yield return new WaitForSeconds(stopDuration);
-        }
-        
-    }
+    
 }

@@ -4,21 +4,28 @@ using UnityEngine;
 
 public class UpWaterAttack : MonoBehaviour
 {
-    public ImageFillTimer imageFillTimer;
-    private void OnCollisionEnter2D(Collision2D collision)
+    public float showDuration = 2f;
+    public GameObject upWater;
+    
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
-            if (playerController != null)
-            {
-                Vector2 dir = (collision.transform.position - transform.position).normalized;
-                playerController.TaskHurt(dir, 3f);
-                if (imageFillTimer != null)
-                {
-                    imageFillTimer.ApplyPunish(5f);
-                }
-            }
+            upWater.SetActive(true);
+            ShowObjectForSeconds();
         }
+    }
+
+    public void ShowObjectForSeconds()
+    {
+        StartCoroutine(ShowObjectRoutine());
+    }
+
+    IEnumerator ShowObjectRoutine()
+    {
+        GetComponent<Collider2D>().enabled = false; 
+        yield return new WaitForSeconds(showDuration);
+        upWater.SetActive(false);
+        
     }
 }

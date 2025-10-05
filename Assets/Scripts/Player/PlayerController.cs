@@ -68,6 +68,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+        animator.SetBool("IsGrounded", isGrounded);
         if (isHurt || isWaiting) // 利用动画事件回调
         {
             /* hurtTimer -= Time.deltaTime;
@@ -93,6 +95,20 @@ public class PlayerController : MonoBehaviour
             rb.gravityScale = gravityScaleAtStart;
             animator.SetBool("IsClimb", false);
         }
+        if (isGrounded)
+        {
+            jumpCount = 0;
+            animator.SetBool("IsJump", false);
+            animator.SetBool("IsDoubleJump", false);
+            animator.SetBool("HasDoubleJump", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            
+            PerformJump();
+            
+        }
     }
 
     private void DoJump()
@@ -107,8 +123,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        animator.SetBool("IsGrounded", isGrounded);
+        
 
         if (isHurt || isWaiting) return;
         
@@ -143,21 +158,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
         }
 
-        if (isGrounded)
-        {
-            jumpCount = 0;
-            animator.SetBool("IsJump", false);
-            animator.SetBool("IsDoubleJump", false);
-            animator.SetBool("HasDoubleJump", false);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (jumpCount < maxJumpCount)
-            {
-                PerformJump();
-            }
-        }
+        
 
     }
 
