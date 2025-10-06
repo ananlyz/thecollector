@@ -27,7 +27,7 @@ public class LevelFristAttackController : MonoBehaviour
         int count = 0;
         while (dropCount == 0 || count < dropCount)
         {
-            animator.SetTrigger("Start");
+            if(animator!=null) animator.SetTrigger("Start");
             yield return new WaitForSeconds(dropWaterDru);
             SpawnDrop();
             count++;

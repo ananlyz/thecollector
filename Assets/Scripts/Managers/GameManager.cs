@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public LevelDatabase LevelDatabase;
     public int CurrentLevel { get; private set; }
     public int UnlockedLevel { get; private set; }
 
@@ -15,7 +16,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SaveSystem.SaveLevel(1);
             UnlockedLevel = SaveSystem.GetUnlockedLevel();
+            Debug.Log(UnlockedLevel);
         }
         else
         {
@@ -23,15 +26,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CompleteLevel() // 支持可重写 不同的关卡可以有不同的结算
+    public void CompleteLevel(string LevelName) // 支持可重写 不同的关卡可以有不同的结算
     {
-        int nextLevel = CurrentLevel + 1;
-        if (nextLevel > UnlockedLevel)
+        int winLevel = LevelDatabase.GetLevelKey(LevelName);
+        if (winLevel+1 > UnlockedLevel)
         {
-            UnlockedLevel = nextLevel;
+            UnlockedLevel = winLevel+1;
             SaveSystem.SaveLevel(UnlockedLevel);
         }
         SceneManager.LoadScene("LevelSelect");
+    }
+
+    public bool IsLevel(string name)
+    {
+        int levelKey = LevelDatabase.GetLevelKey(name);
+        if (levelKey == 0) return false;
+        return true;
+    }
+
+    public bool IsLevelUnLocked(string name)
+    {
+        int levelKey = LevelDatabase.GetLevelKey(name);
+        if (levelKey <= UnlockedLevel) return true;
+        return false;
     }
 }
 

@@ -9,6 +9,7 @@ public class ImageFillTimer : MonoBehaviour
     public Image backgroundImage;
     public float duration = 60f;
     private float timer = 0f;
+    public GameObject gameFlowManager;
 
     void Start()
     {
@@ -22,6 +23,12 @@ public class ImageFillTimer : MonoBehaviour
     void Update()
     {
         if (targetImage == null || backgroundImage == null) return;
+        if (timer >= duration)
+        {
+            gameFlowManager.SetActive(true);
+            gameFlowManager.GetComponent<GameFlowManager>().LoseGame();
+            return;
+        }
 
         timer += Time.deltaTime;
         float progress = Mathf.Clamp01(timer / duration);

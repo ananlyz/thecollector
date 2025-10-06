@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ladder
   - Attack
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -13,7 +14,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Wall
   - 
   - 
   - 
@@ -49,11 +50,20 @@ TagManager:
   - name: ZBg
     uniqueID: 3918285591
     locked: 0
+  - name: Fbg
+    uniqueID: 3871718983
+    locked: 0
+  - name: Ffbg
+    uniqueID: 1456764309
+    locked: 0
   - name: Ladder
     uniqueID: 1769885425
     locked: 0
   - name: Attack
     uniqueID: 2888692041
+    locked: 0
+  - name: Get
+    uniqueID: 1089864071
     locked: 0
   - name: Player
     uniqueID: 2921066359

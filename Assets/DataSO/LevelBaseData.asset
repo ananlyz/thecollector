@@ -17,3 +17,7 @@ MonoBehaviour:
     sceneName: LevelSelect
   - key: 1
     sceneName: Level1
+  - key: 2
+    sceneName: Level2
+  - key: 3
+    sceneName: Level3

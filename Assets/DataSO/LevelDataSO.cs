@@ -26,6 +26,16 @@ public class LevelDatabase : ScriptableObject
         return null;
     }
 
+    public int GetLevelKey(string sceneName)
+    {
+        foreach (var entry in levels)
+        {
+            if (entry.sceneName == sceneName)
+                return entry.key;
+        }
+        return 0;
+    }
+
     public void AddLevel(int key, string sceneName)
     {
         foreach (var entry in levels)

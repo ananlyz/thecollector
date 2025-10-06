@@ -2,10 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class SelectLevelButton : BaseButton
 {
     public int levelKey = 0; // 默认进入关卡选择页
     public LevelDatabase LevelDatabase;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        button.interactable = true;
+        if (levelKey > 0) button.interactable = GameManager.Instance.UnlockedLevel >= levelKey;
+    }
+    
 
     protected override void OnClick()
     {

@@ -38,10 +38,11 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.LoadScene("LevelSelect");
     }
-   
+
     public void LoadLevel(string levelSceneName)
     {
-        SceneManager.LoadScene(levelSceneName);
+        if (GameManager.Instance.IsLevelUnLocked(levelSceneName)) SceneManager.LoadScene(levelSceneName);
+        else SceneManager.LoadScene("LevelSelect");
     }
 
     public void BackToMainMenu()
