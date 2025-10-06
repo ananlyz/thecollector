@@ -77,7 +77,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1373900937
-  m_SortingLayer: 6
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4ba5175a5977f0a4e8a8de7984f3f9d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -164,10 +164,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d1c24aab817284b857741d738db4f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hurtSFX: {fileID: 8300000, guid: 9dce949f94bef874aabb2f55c0d4fdcd, type: 3}
   moveSpeed: 5
   climbSpeed: 3
   jumpForce: 10
   maxJumpCount: 2
+  crouchHeight: 0.5
+  tSpeed: 10
   isGrounded: 0
   groundCheck: {fileID: 1283403554464903227}
   checkRadius: 0.8
@@ -179,6 +182,7 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  isWallJump: 0
 --- !u!95 &1208651477857563861
 Animator:
   serializedVersion: 5

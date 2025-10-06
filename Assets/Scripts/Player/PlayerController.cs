@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
+    public AudioClip hurtSFX;
     [Header("移动参数")]
     public float moveSpeed = 5f;
     public float climbSpeed = 3f;
@@ -64,6 +65,17 @@ public class PlayerController : MonoBehaviour
         targetColliderSize = originalColliderSize;
         targetColliderOffset = originalColliderOffset;
         gravityScaleAtStart = rb.gravityScale;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isOnLadder = true;
+                animator.SetBool("IsOnLadder", true);
+            }
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -128,6 +140,7 @@ public class PlayerController : MonoBehaviour
 
                 isWallJump = true;
                 animator.SetBool("IsWallJump", true);
+                DoWallJump();
             }
             return;
         }
@@ -184,6 +197,18 @@ public class PlayerController : MonoBehaviour
         {
             PerformJump();
         }
+        if (moveInputY < 0 && !isOnLadder && isGrounded) // 下蹲
+        {
+            targetColliderSize = new Vector2(originalColliderSize.x, originalColliderSize.y * crouchHeight);
+            targetColliderOffset = new Vector2(originalColliderOffset.x, originalColliderOffset.y - (originalColliderSize.y - targetColliderSize.y)/2f);
+            animator.SetBool("IsCrouch", true);
+        }
+        else
+        {
+            targetColliderSize = originalColliderSize;
+            targetColliderOffset = originalColliderOffset;
+            animator.SetBool("IsCrouch", false);
+        }
         
         // 平滑过渡
         col.size = Vector2.Lerp(col.bounds.size, targetColliderSize, Time.deltaTime * tSpeed);
@@ -223,7 +248,12 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         
-        if (isHurt || isWaiting || isOntheWall) return;
+        if (isHurt || isWaiting || isOntheWall)
+        {
+            animator.SetBool("IsCrouchWalk", false);
+            animator.SetBool("IsRun", false);
+            return;
+        }
         
         if (moveInputX != 0 && !isOnLadder) // 反转
         {
@@ -232,22 +262,16 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity = new Vector2(moveInputX * moveSpeed, rb.velocity.y);
 
-        if (!isGrounded) return;
+        if (!isGrounded)
+        {
+            animator.SetBool("IsCrouchWalk", false);
+            animator.SetBool("IsRun", false);
+            return;
+        }
 
         if (moveInputY < 0) animator.SetBool("IsCrouchWalk", Mathf.Abs(moveInputX) > 0f);
         else animator.SetBool("IsRun", Mathf.Abs(moveInputX) > 0f);
-        if (moveInputY < 0 && !isOnLadder && isGrounded) // 下蹲
-        {
-            targetColliderSize = new Vector2(originalColliderSize.x, originalColliderSize.y * crouchHeight);
-            targetColliderOffset = new Vector2(originalColliderOffset.x, originalColliderOffset.y - (originalColliderSize.y - targetColliderSize.y)/2f);
-            animator.SetBool("IsCrouch", true);
-        }
-        else
-        {
-            targetColliderSize = originalColliderSize;
-            targetColliderOffset = originalColliderOffset;
-            animator.SetBool("IsCrouch", false);
-        }
+        
 
         //TODO: 贴墙处理 
         /* bool onWallRight = Physics2D.Raycast(transform.position, Vector2.right, 0.6f, groundLayer);
@@ -282,6 +306,7 @@ public class PlayerController : MonoBehaviour
     public void TaskHurt(Vector2 hitDirection, float knockbackForce)
     {
         if (isHurt) return;
+        AudioSource.PlayClipAtPoint(hurtSFX, transform.position, 2.0f);
         isHurt = true;
         animator.SetBool("IsHurt", true);
         rb.velocity = Vector2.zero;

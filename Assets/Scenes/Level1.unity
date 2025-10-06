@@ -462,6 +462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c1611f3525df074db1627fe35239d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  punishTime: 3
   imageFillTimer: {fileID: 2073487767}
 --- !u!1001 &438650002
 PrefabInstance:
@@ -770,6 +771,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 861a2202735d11d4cbce3f617c6702f1, type: 3}
+--- !u!1 &471846333 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6774997103050335382, guid: 861a2202735d11d4cbce3f617c6702f1, type: 3}
+  m_PrefabInstance: {fileID: 471846332}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &500446906
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,7 +1243,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10.7
+  orthographic size: 21.63
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1695,6 +1701,7 @@ GameObject:
   - component: {fileID: 1544313249}
   - component: {fileID: 1544313248}
   - component: {fileID: 1544313250}
+  - component: {fileID: 1544313251}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -1756,7 +1763,20 @@ MonoBehaviour:
   dropSpawnDelay: 1
   dropSpawnInterval: 1.5
   dropCount: 0
-  gameFlowManager: {fileID: 0}
+--- !u!114 &1544313251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1544313247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78384034bf06c5349ae1f4def98dba98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PausePanel: {fileID: 471846333}
+  GameFloeManager: {fileID: 272786624}
 --- !u!1 &1588916752
 GameObject:
   m_ObjectHideFlags: 0
@@ -2115,6 +2135,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1799033001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1799033002}
+  - component: {fileID: 1799033003}
+  m_Layer: 0
+  m_Name: BGM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1799033002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799033001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1799033003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799033001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df6f423b917bc54ab6efe34523a7cbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgm: {fileID: 8300000, guid: 927d356a0f5802e4b9a54c57fb41b03b, type: 3}
 --- !u!1 &1809941987
 GameObject:
   m_ObjectHideFlags: 3
@@ -2661,6 +2726,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1799033002}
   - {fileID: 1165110323}
   - {fileID: 677455857}
   - {fileID: 1330150778}

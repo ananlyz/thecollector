@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1406275255
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0eec2c1bbd548ef4488951b95a99a311, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -161,4 +161,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5473fad3d8654fe4e87af95cf718ce24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dropWaterSFX: {fileID: 8300000, guid: 2ad041f5fc320c54987cff254f2195a7, type: 3}
   imageFillTimer: {fileID: 0}

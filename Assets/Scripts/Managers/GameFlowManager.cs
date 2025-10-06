@@ -14,7 +14,9 @@ public class GameFlowManager : MonoBehaviour
     public Sprite winBG;
     public Sprite loseBG;
     private Image image;
-    private void Awake() 
+    public AudioClip winClip;
+    public AudioClip LoseClip;
+    private void Awake()
     {
         image = GetComponent<Image>();
         var lose = loseBG;
@@ -22,6 +24,7 @@ public class GameFlowManager : MonoBehaviour
     }
     public void WinGame()
     {
+        AudioSource.PlayClipAtPoint(winClip, transform.position, 2.0f);
         loseOj.SetActive(false);
         back.SetActive(false);
         image.sprite = winBG;
@@ -30,6 +33,7 @@ public class GameFlowManager : MonoBehaviour
     }
     public void LoseGame()
     {
+        AudioSource.PlayClipAtPoint(LoseClip, transform.position, 2.0f);
         winOj.SetActive(false);
         image.sprite = loseBG;
         isLose = true;

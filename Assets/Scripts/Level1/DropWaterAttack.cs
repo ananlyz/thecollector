@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DropWaterAttack : MonoBehaviour
 {
+    public AudioClip dropWaterSFX;
+    void Start()
+    {
+        AudioSource.PlayClipAtPoint(dropWaterSFX, transform.position, 2.0f);
+    }
     public ImageFillTimer imageFillTimer;
     private void OnCollisionEnter2D(Collision2D collision)
     {

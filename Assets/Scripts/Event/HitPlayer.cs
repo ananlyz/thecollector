@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HitPlayer : MonoBehaviour
 {
+    public float punishTime = 5f;
     public ImageFillTimer imageFillTimer;
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -16,7 +17,7 @@ public class HitPlayer : MonoBehaviour
                 playerController.TaskHurt(dir, 3f);
                 if (imageFillTimer != null)
                 {
-                    imageFillTimer.ApplyPunish(5f); 
+                    imageFillTimer.ApplyPunish(punishTime); 
                 }
             }
         }

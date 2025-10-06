@@ -97,6 +97,5 @@ public class BreadPDController : MonoBehaviour
         }
 
         breadWall.transform.position = oriBreadPos;
-        breadWall.SetActive(false);
     }
 }

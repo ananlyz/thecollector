@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            SaveSystem.SaveLevel(1);
+            //SaveSystem.SaveLevel(1);
             UnlockedLevel = SaveSystem.GetUnlockedLevel();
             Debug.Log(UnlockedLevel);
         }

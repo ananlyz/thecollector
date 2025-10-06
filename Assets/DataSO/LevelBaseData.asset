@@ -21,3 +21,5 @@ MonoBehaviour:
     sceneName: Level2
   - key: 3
     sceneName: Level3
+  - key: 4
+    sceneName: Level4
