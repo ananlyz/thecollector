@@ -140,7 +140,13 @@ public class PlayerController : MonoBehaviour
 
                 isWallJump = true;
                 animator.SetBool("IsWallJump", true);
-                DoWallJump();
+                Debug.Log("this wall jump");
+
+                //rb.AddForce(Vector2.left * transform.localScale.x * jumpForce, ForceMode2D.Impulse);
+                //rb.AddForce(Vector2.right * jumpForce, ForceMode2D.Impulse);
+                rb.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * jumpForce, jumpForce);
+                isOntheWall = false;
+                //DoWallJump();
             }
             return;
         }
